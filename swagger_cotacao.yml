@@ -1,0 +1,142 @@
+swagger: "2.0"
+info:
+  description: "Aplicação para manutenção de cotações"
+  version: "1.0.0"
+  title: "Cotações"
+host: "auto-cotacao-app"
+basePath: "/v0"
+tags:
+- name: "cotacoes"
+  description: "Manutenção de Cotações"
+schemes:
+- "https"
+- "http"
+paths:
+  /cotacoes/{numeroCotacao}:
+    get:
+      tags:
+      - "cotacoes"
+      summary: "Busca cotação por número"
+      description: "Recupera informações sobre a Cotação a partir do número da mesma"
+      operationId: "findByNumeroCotacao" #validar com devTeam
+      produces:
+      - "application/json"
+      parameters:
+      - name: "numeroCotacao"
+        in: "path"
+        description: "Número da cotação a ser retornada"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Operação realizada com sucesso"
+          schema:
+            $ref: "#/definitions/Cotacao"
+        400:
+          description: "Parâmetro inválido" #refinar códigos de erro
+        404:
+          description: "Serviço não disponível"
+  /cotacoes:
+    post:
+      tags:
+      - "cotacoes"
+      summary: "Cria cotacao inicial"
+      description: ""
+      operationId: "createCotacao" #alinhar com devTeam
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "cotacao"
+        description: "Objeto da cotação a ser efetuada"
+        required: true
+        schema:
+          $ref: "#/definitions/Cotacao"
+      responses:
+        default:
+          description: "Cotação criada com sucesso"
+definitions:
+  Cotacao:
+    type: "object"
+    properties:
+      numeroCotacao:
+        type: "integer"
+        format: "int64"
+      segurado:
+        $ref: "#/definitions/Pessoa"
+      susep:
+        type: "string"
+      inicioVigencia:
+        type: "string"
+        format: "date"
+      fimVigencia:
+        type: "string"
+        format: "date"
+      dataCriacao:
+        type: "string"
+        format: "date"
+      tipoSeguro:
+        type: "integer"
+        format: "int32"
+      status:
+        type: "integer"
+        format: "int32"
+      itens:
+        type: array
+        items:
+          $ref: "#/definitions/Item"
+  Pessoa:
+    type: "object"
+    properties:
+      codigoPessoa:
+        type: "integer"
+        format: "int64"
+  Item:
+    type: "object"
+    properties:
+      veiculo:
+        $ref: "#/definitions/Veiculo"
+      cepPernoite:
+        type: "integer"
+        format: "int32"
+      codigoTipoUso:
+        type: "integer"
+        format: "int32"
+      condutores:
+        type: array
+        items:
+          $ref: "#/definitions/Condutor"
+  Veiculo:
+    type: "object"
+    properties:
+      veiculoIntegracao:
+        $ref: "#/definitions/VeiculoIntegracao"
+      placa:
+        type: "string"
+      
+  Condutor:
+    type: "object"
+    properties:
+      pessoa:
+        $ref: "#/definitions/Pessoa"
+      principal:
+        type: "boolean"
+  VeiculoIntegracao:
+    type: "object"
+    properties:
+      codigoVeiculo:
+        type: "integer"
+        format: "int64"
+  ApiResponse:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      type:
+        type: "string"
+      message:
+        type: "string"
+externalDocs:
+  description: "Para mais informações"
+  url: "http://portoseguro.com.br"
